@@ -171,7 +171,18 @@ __unpushed() {
     git log --pretty=oneline "${remote_name}"/"${branch_name}"..HEAD 2> /dev/null
 }
 
-
+__needs_pull() {
+  # In order for this to give accurater information, git fetch needs to be run
+  # It does not make sense to run git fetch here, as it would slow down every
+  # new prompt
+  local branch_name=$(__branch_name)
+  if [ "" != "${branch_name}" ]
+  then
+    if [ $(git rev-parse HEAD) = $(git rev-parse @{u}) ]; then echo "0"; else echo "1"; fi
+  else
+		echo "0"
+  fi
+}
 #################################
 #            BLOCKS             #
 #################################
@@ -239,6 +250,7 @@ prompt() {
   # blocks in "background;font-color;text" format
   local branch="$(__branch_text)"
   local branch_color="${__THEME[white]};${__THEME[bgdark]}"
+  if [ "0" != "$(__needs_pull)" ]; then branch_color="${__THEME[red]};${__THEME[yellow]}"; fi
   if [ "" != "$(__unpushed)" ]; then branch_color="${__THEME[green]};${__THEME[bgdark]}"; fi
   if [ "" != "$(__staged)" ]; then branch_color="${__THEME[yellow]};${__THEME[bgdark]}"; fi
   if [ "" != "$(__changed)" ]; then branch_color="${__THEME[orange]};${__THEME[bgdark]}"; fi
