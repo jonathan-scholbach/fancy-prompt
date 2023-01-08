@@ -5,4 +5,17 @@ I removed all the configuration options which I found not necessary for me
 personally, and refactored the code with a more functional approach. That made
 it easier for me to move blocks around, and customize their colors.
 
-I just publish it, because why not.
+
+# Features
+
+Inside a git repository, the git branch is displayed.
+
+The background color of the branch is encoding the state of the repository:
+
++ branch needs pulling
++ branch has unstaged files
++ branch has uncommited files
++ branch has unpushed commits
++ branch is clean
+
+![demonstration of color](demonstration.png)
