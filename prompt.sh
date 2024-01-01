@@ -39,7 +39,7 @@ __bg() {
   # background color from 256 code, -1 gives default
   local color_code=$1
   if [ "-1" = "${color_code}" ]
-  then 
+  then
     echo "\\[\\e[49m\\]"
   else
     echo "\\[\\e[48;5;${color_code}m\\]"
@@ -50,7 +50,7 @@ __fg() {
   # foreground color from 256 code, -1 gives default
   local color_code=$1
   if [ "-1" = "${color_code}" ]
-  then 
+  then
     echo "\\[\\e[39m\\]"
   else
     echo "\\[\\e[38;5;${color_code}m\\]"
@@ -137,7 +137,7 @@ __branch_icon() {
   echo "${__ICONS[remote_branch]}"
 }
 
-__branch_text() { 
+__branch_text() {
   local branch_text=""
   if [ "" != "$(__branch_name)" ]; then branch_text="$(__branch_icon) $(__branch_name)"; fi
   #if [ "" != "$(__branch_name)" ]; then branch_text=" $(__branch_name)"; fi
@@ -183,6 +183,20 @@ __needs_pull() {
 		echo "0"
   fi
 }
+
+#################################
+#             VENV              #
+#################################
+
+__venv() {
+  if [ "${VIRTUAL_ENV}" ]
+  then
+    echo $(basename "${VIRTUAL_ENV}")
+  else
+    echo ""
+  fi
+}
+
 #################################
 #            BLOCKS             #
 #################################
@@ -225,7 +239,7 @@ __chain() {
     local background="${block_array[0]}"
     local font_color="${block_array[1]}"
     local text="${block_array[2]}"
-	
+
     # first container starts with clean edge
     if [ -z "$prev_background" ]; then prev_background=$background; fi
     if [ "" != "${text}" ]  # skip empty blocks
@@ -235,7 +249,7 @@ __chain() {
       prev_background="${background}"
     fi
   done
-	
+
   # append tail separator
   chain+=" $(__colorized_separator "${prev_background}" "${__THEME[default]}")"
 
@@ -260,7 +274,13 @@ prompt() {
   user="${__THEME[purple]};${__THEME[bgdark]};${user_text}"
   path="${__THEME[violet]};${__THEME[white]};${path_text}"
 
-  declare -a chain=( ${user} ${path} "${branch}" )
+  local venv=$(__venv)
+  if [ "" != __venv ]
+  then
+    venv="${__THEME[subtle]};${__THEME[white]};${venv}"
+  fi
+
+  declare -a chain=( ${user} ${path} "${branch}" "${venv}" )
 
   PS1=$(__chain "${chain[@]}")
 }
