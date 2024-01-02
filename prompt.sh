@@ -7,6 +7,7 @@ declare -A __ICONS=( \
   ["local_branch"]="" \
   ["remote_branch"]="-" \
   ["merged_branch"]="" \
+  ["stashed"]="󰏢" \
 )
 
 
@@ -140,7 +141,6 @@ __branch_icon() {
 __branch_text() {
   local branch_text=""
   if [ "" != "$(__branch_name)" ]; then branch_text="$(__branch_icon) $(__branch_name)"; fi
-  #if [ "" != "$(__branch_name)" ]; then branch_text=" $(__branch_name)"; fi
   echo "${branch_text}"
 }
 
@@ -162,7 +162,8 @@ __changed() {
 }
 
 __stashed() {
-    git stash list 2> /dev/null
+  local msg="$(git stash list &2> /dev/null)"
+  if [[ "" != "${msg}" ]]; then echo "${__ICONS[stashed]}"; else echo ""; fi
 }
 
 __unpushed() {
@@ -178,7 +179,7 @@ __needs_pull() {
   local branch_name=$(__branch_name)
   if [ "" != "${branch_name}" ]
   then
-    if [ $(git rev-parse HEAD) = $(git rev-parse @{u}) ]; then echo "0"; else echo "1"; fi
+    if [ $(git rev-parse HEAD 2 > /dev/null) = $(git rev-parse @{u} 2 > /dev/null) ]; then echo "0"; else echo "1"; fi
   else
 		echo "0"
   fi
@@ -262,6 +263,9 @@ __chain() {
 
 prompt() {
   # blocks in "background;font-color;text" format
+  local user="${__THEME[purple]};${__THEME[bgdark]};${user_text}"
+  local path="${__THEME[violet]};${__THEME[white]};${path_text}"
+
   local branch="$(__branch_text)"
   local branch_color="${__THEME[white]};${__THEME[bgdark]}"
   if [ "0" != "$(__needs_pull)" ]; then branch_color="${__THEME[red]};${__THEME[yellow]}"; fi
@@ -271,8 +275,7 @@ prompt() {
   if [ "" != "$(__untracked)" ]; then branch_color="${__THEME[pink]};${__THEME[bgdark]}"; fi
   branch="${branch_color};${branch}"
 
-  user="${__THEME[purple]};${__THEME[bgdark]};${user_text}"
-  path="${__THEME[violet]};${__THEME[white]};${path_text}"
+  local stash="${__THEME[cyan]};${__THEME[bgdark]};$(__stashed)"
 
   local venv=$(__venv)
   if [ "" != __venv ]
@@ -280,7 +283,7 @@ prompt() {
     venv="${__THEME[subtle]};${__THEME[white]};${venv}"
   fi
 
-  declare -a chain=( ${user} ${path} "${branch}" "${venv}" )
+  declare -a chain=( ${user} ${path} "${stash}" "${branch}" "${venv}" )
 
   PS1=$(__chain "${chain[@]}")
 }
