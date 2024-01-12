@@ -162,7 +162,7 @@ __changed() {
 }
 
 __stashed() {
-  local msg="$(git stash list &2> /dev/null)"
+  local msg="$(git stash list 2> /dev/null)"
   if [[ "" != "${msg}" ]]; then echo "${__ICONS[stashed]}"; else echo ""; fi
 }
 
