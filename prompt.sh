@@ -4,9 +4,9 @@
 
 declare -A __ICONS=( \
   ["separator"]="" \
-  ["local_branch"]="" \
-  ["remote_branch"]="-" \
-  ["merged_branch"]="" \
+  ["local_branch"]="" \
+  ["remote_branch"]="" \
+  ["merged_branch"]="" \
   ["stashed"]="󰏢" \
 )
 
