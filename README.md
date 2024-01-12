@@ -21,6 +21,9 @@ The background color of the branch is encoding the state of the repository:
 
 ![demonstration of color](demonstration.png)
 
+If there are stashes in the current branch, this is indicated by a highlighted
+paper clip symbol in front of the branch name.
+
 ## venv
 
 If a virtual environment is activated, it is displayed.
