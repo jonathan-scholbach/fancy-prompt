@@ -179,7 +179,7 @@ __needs_pull() {
   local branch_name=$(__branch_name)
   if [ "" != "${branch_name}" ]
   then
-    if [ $(git rev-parse HEAD 2 > /dev/null) = $(git rev-parse @{u} 2 > /dev/null) ]; then echo "0"; else echo "1"; fi
+    if [ $(git rev-parse HEAD) = $(git rev-parse @{u}) ]; then echo "0"; else echo "1"; fi
   else
 		echo "0"
   fi
@@ -273,7 +273,7 @@ prompt() {
   if [ "" != "$(__staged)" ]; then branch_color="${__THEME[yellow]};${__THEME[bgdark]}"; fi
   if [ "" != "$(__changed)" ]; then branch_color="${__THEME[orange]};${__THEME[bgdark]}"; fi
   if [ "" != "$(__untracked)" ]; then branch_color="${__THEME[pink]};${__THEME[bgdark]}"; fi
-  branch="${branch_color};${branch}"
+   branch="${branch_color};${branch}"
 
   local stash="${__THEME[cyan]};${__THEME[bgdark]};$(__stashed)"
 
