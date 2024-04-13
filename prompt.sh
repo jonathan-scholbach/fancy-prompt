@@ -3,7 +3,7 @@
 #################################
 
 declare -A __ICONS=( \
-  ["separator"]="" \
+  ["separator"]="" \
   ["local_branch"]="" \
   ["remote_branch"]="" \
   ["merged_branch"]="" \
