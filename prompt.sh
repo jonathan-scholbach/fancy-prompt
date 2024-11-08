@@ -23,16 +23,18 @@ declare -A __THEME=(\
   ["bg"]="236"\
   ["bgdark"]="235"\
   ["bgdarker"]="234"\
-  ["violet"]="61"\
+  ["violet"]="69"\
   ["selection"]="239"\
   ["subtle"]="238"\
-  ["cyan"]="117"\
-  ["green"]="84"\
+  ["cyan"]="74"\
+  ["green"]="28"\
+  ["sky"]="38"\
   ["orange"]="215"\
-  ["pink"]="212"\
-  ["purple"]="141"\
+  ["pink"]="169"\
+  ["mauve"]="99"\
   ["red"]="203"\
-  ["yellow"]="228"\
+  ["yellow"]="226"\
+  ["lightgray"]="252"\
   ["white"]="255"\
 )
 
@@ -263,24 +265,24 @@ __chain() {
 
 prompt() {
   # blocks in "background;font-color;text" format
-  local user="${__THEME[purple]};${__THEME[bgdark]};${user_text}"
+  local user="${__THEME[mauve]};${__THEME[white]};${user_text}"
   local path="${__THEME[violet]};${__THEME[white]};${path_text}"
 
   local branch="$(__branch_text)"
-  local branch_color="${__THEME[white]};${__THEME[bgdark]}"
-  if [ "0" != "$(__needs_pull)" ]; then branch_color="${__THEME[red]};${__THEME[yellow]}"; fi
-  if [ "" != "$(__unpushed)" ]; then branch_color="${__THEME[green]};${__THEME[bgdark]}"; fi
+  local branch_color="${__THEME[subtle]};${__THEME[white]}"
+  if [ "0" != "$(__needs_pull)" ]; then branch_color="${__THEME[red]};${__THEME[white]}"; fi
+  if [ "" != "$(__unpushed)" ]; then branch_color="${__THEME[green]};${__THEME[white]}"; fi
   if [ "" != "$(__staged)" ]; then branch_color="${__THEME[yellow]};${__THEME[bgdark]}"; fi
-  if [ "" != "$(__changed)" ]; then branch_color="${__THEME[orange]};${__THEME[bgdark]}"; fi
+  if [ "" != "$(__changed)" ]; then branch_color="${__THEME[orange]};${__THEME[white]}"; fi
   if [ "" != "$(__untracked)" ]; then branch_color="${__THEME[pink]};${__THEME[bgdark]}"; fi
    branch="${branch_color};${branch}"
 
-  local stash="${__THEME[cyan]};${__THEME[bgdark]};$(__stashed)"
+  local stash="${__THEME[sky]};${__THEME[white]};$(__stashed)"
 
   local venv=$(__venv)
   if [ "" != __venv ]
   then
-    venv="${__THEME[subtle]};${__THEME[white]};${venv}"
+    venv="${__THEME[lightgray]};${__THEME[bgdark]};${venv}"
   fi
 
   declare -a chain=( ${user} ${path} "${stash}" "${branch}" "${venv}" )
