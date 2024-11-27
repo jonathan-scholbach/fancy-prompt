@@ -89,6 +89,9 @@ __branch_name() {
 }
 
 __remote_branch_name() {
+  is_only_local_branch=$(git branch -r 2> /dev/null | grep -c "$param_branch_name")
+
+  if [ 0 -eq "$is_only_local_branch" ]; then echo "";fi
   local branch_name
 
   branch_name=$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" 2> /dev/null | cut -d"/" -f1)
@@ -102,7 +105,7 @@ __branch_is_local_only() {
 
   is_only_local_branch=$(git branch -r 2> /dev/null | grep -c "$param_branch_name")
 
-  if [ 0 -eq "$is_only_local_branch" ]; then return 0;fi
+  if [ 0 -eq "$is_only_local_branch" ]; then return 0; fi
   return 1
 }
 
@@ -125,13 +128,13 @@ __branch_is_merged() {
 __branch_icon() {
   local param_branch_name="$1"
 
-  if __branch_is_local_only "$param_branch_name"
+  if $(__branch_is_local_only)
   then
       echo "${__ICONS[local_branch]}"
       return
   fi
 
-  if __branch_is_merged "$param_branch_name"
+  if $(__branch_is_merged)
   then
       echo "${__ICONS[merged_branch]}"
       return
@@ -152,15 +155,15 @@ __branch_text() {
 #################################
 
 __staged() {
-    git diff --name-only --cached 2> /dev/null
+  git diff --name-only --cached 2> /dev/null
 }
 
 __untracked() {
-    git ls-files --others --exclude-standard 2> /dev/null
+  git ls-files --others --exclude-standard 2> /dev/null
 }
 
 __changed() {
-    git ls-files -m 2> /dev/null
+  git ls-files -m 2> /dev/null
 }
 
 __stashed() {
@@ -175,13 +178,19 @@ __unpushed() {
 }
 
 __needs_pull() {
-  # In order for this to give accurater information, git fetch needs to be run
-  # It does not make sense to run git fetch here, as it would slow down every
-  # new prompt
+  # In order for this to give more accurate information, git fetch needs to be
+  # run It does not make sense to run git fetch here, as it would slow down
+  # every new prompt
+  local local_only=$(__branch_is_local_only)
+  if [ "0" != "${local_only}" ]
+  then
+    echo "0"
+    return 0
+  fi
   local branch_name=$(__branch_name)
   if [ "" != "${branch_name}" ]
   then
-    if [ $(git rev-parse HEAD) = $(git rev-parse @{u}) ]; then echo "0"; else echo "1"; fi
+    if [ $(git rev-parse HEAD) = $(git rev-parse @{u}) ]; then echo "0"; else echo "0"; fi
   else
 		echo "0"
   fi
@@ -275,7 +284,7 @@ prompt() {
   if [ "" != "$(__staged)" ]; then branch_color="${__THEME[yellow]};${__THEME[bgdark]}"; fi
   if [ "" != "$(__changed)" ]; then branch_color="${__THEME[orange]};${__THEME[white]}"; fi
   if [ "" != "$(__untracked)" ]; then branch_color="${__THEME[pink]};${__THEME[bgdark]}"; fi
-   branch="${branch_color};${branch}"
+  branch="${branch_color};${branch}"
 
   local stash="${__THEME[sky]};${__THEME[white]};$(__stashed)"
 
